@@ -56,7 +56,11 @@ function term_title_precmd() {
 	emulate -L zsh
 	local cmd='zsh'
 	local dir='%~'
-	term_set_title $cmd:${(%)dir}
+    local host=""
+    if is_ssh; then
+        host="[$HOST] "
+    fi
+	term_set_title "$host$cmd:${(%)dir}"
 }
 
 function term_title_preexec() {
@@ -66,6 +70,16 @@ function term_title_preexec() {
 	local dir='%~'
 	term_set_title $cmd:${(%)dir}
 }
+
+# This stuff is mine:
+function is_ssh() {
+    if [[ -z "$SSH_TTY" ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+# to here
 
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd term_title_precmd
